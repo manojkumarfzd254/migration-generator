@@ -1,0 +1,30 @@
+{
+    "name": "manojkumar/migration-generator",
+    "description": "This package used for generate all migrations from database for Laravel it is supports only for MySQL and PostgreSql",
+    "type": "package",
+    "keywords": ["laravel", "package", "php", "migrations", "migrations-generator", "generator"],
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Manojkumar\\MigrationGenerator\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Manojkumar\\MigrationGenerator\\MigrationGeneratorServiceProvider"
+            ],
+            "aliases": {
+                "PackageAlias": "Manojkumar\\MigrationGenerator\\Facades\\PackageAlias"
+            }
+        }
+    },
+    "authors": [
+        {
+            "name": "Manoj Kumar",
+            "email": "manojkumarfzd254@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
