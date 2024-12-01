@@ -30,7 +30,7 @@ class GenerateMigrationsCommand extends Command
         }
 
         foreach ($tables as $tableName) {
-            if($tableName == "migrations")
+            if ($tableName == "migrations")
                 continue;
             $this->generateMigration($connection, $driver, $tableName);
         }
@@ -103,12 +103,24 @@ class GenerateMigrationsCommand extends Command
     protected function generateColumns(array $columns, string $driver, string $tableName, string $connection): string
     {
         $schema = '';
+        $hasTimestamps = false;
+        $hasSoftDeletes = false;
 
         foreach ($columns as $column) {
             $name = $driver === 'mysql' ? $column->Field : $column->column_name;
             $type = $driver === 'mysql'
                 ? $this->mapMysqlColumnType($column->Type)
                 : $this->mapPgsqlColumnType($column->data_type);
+
+            if ($name === 'created_at' || $name === 'updated_at') {
+                $hasTimestamps = true;
+                continue;
+            }
+
+            if ($name === 'deleted_at') {
+                $hasSoftDeletes = true;
+                continue;
+            }
 
             $nullable = ($driver === 'mysql' ? $column->Null : $column->is_nullable) === 'YES' ? '->nullable()' : '';
             $default = $this->getDefaultValue($driver, $column);
@@ -120,8 +132,17 @@ class GenerateMigrationsCommand extends Command
             }
         }
 
+        if ($hasTimestamps) {
+            $schema .= "            \$table->timestamps();\n";
+        }
+
+        if ($hasSoftDeletes) {
+            $schema .= "            \$table->softDeletes();\n";
+        }
+
         return $schema;
     }
+
 
 
     protected function mapMysqlColumnType(string $type): string
